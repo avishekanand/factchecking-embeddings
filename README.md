@@ -69,7 +69,7 @@ To reproduce the findings on a different machine:
    pip install accelerate aiohttp==3.10.11
    ```
 3. **Training Details**:
-   - The model was trained for **1 epoch** (sufficient for this MiniLM backbone and dataset size).
+   - The model was trained for **10 epoch** (sufficient for this MiniLM backbone and dataset size).
    - Parameters are defined in [cpu_train.yaml](configs/cpu_train.yaml).
    - Detailed training metrics and internal state are recorded in `runs/factcheck_relevance_cpu/trainer_state.json`.
 4. **Provide Raw Data**:
