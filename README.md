@@ -1,6 +1,6 @@
 # FactCheck Embeddings
 
-This repository contains automated codegen to train a Tevatron relevance bi-encoder for fact-checking.
+This repository training recipes for a bi-encoder for fact-checking.
 
 ## Goal
 Train a dense retriever to distinguish between `RELEVANT`/`PARTIALLY_RELEVANT` and `NOT_RELEVANT` evidence snippets for a given claim.
