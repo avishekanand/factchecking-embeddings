@@ -1,0 +1,10 @@
+input_path: "data/raw/claim_evidence_pairs_jan_2026_test.json"
+out_dir: "data/tevatron_test"
+dev_ratio: 1.0
+seed: 42
+label_mapping:
+  RELEVANT: "positive"
+  PARTIALLY_RELEVANT: "positive"
+  NOT_RELEVANT: "negative"
+  ERROR: "drop"
+  UNKNOWN: "drop"

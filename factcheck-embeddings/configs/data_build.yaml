@@ -1,0 +1,15 @@
+input_path: "data/raw/claim_evidence_pairs_jan_2026_train.json"
+out_dir: "data/tevatron"
+dev_ratio: 0.05
+seed: 42
+k_neg: 3
+hard_pool_size: 20
+hard_frac: 0.67
+label_mapping:
+  RELEVANT: "positive"
+  PARTIALLY_RELEVANT: "positive"
+  NOT_RELEVANT: "negative"
+  ERROR: "drop"
+  UNKNOWN: "drop"
+max_q_len: 64
+max_p_len: 192

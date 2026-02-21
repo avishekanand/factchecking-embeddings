@@ -1,0 +1,9 @@
+tevatron
+sentence-transformers
+pyyaml
+faiss-cpu
+accelerate
+tqdm
+pandas
+numpy
+pytest

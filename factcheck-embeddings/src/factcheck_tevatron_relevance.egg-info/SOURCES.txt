@@ -1,0 +1,15 @@
+README.md
+pyproject.toml
+src/factcheck_relevance/build_data.py
+src/factcheck_relevance/build_global.py
+src/factcheck_relevance/encode.py
+src/factcheck_relevance/eval.py
+src/factcheck_relevance/retrieve.py
+src/factcheck_relevance/train.py
+src/factcheck_relevance/utils.py
+src/factcheck_tevatron_relevance.egg-info/PKG-INFO
+src/factcheck_tevatron_relevance.egg-info/SOURCES.txt
+src/factcheck_tevatron_relevance.egg-info/dependency_links.txt
+src/factcheck_tevatron_relevance.egg-info/requires.txt
+src/factcheck_tevatron_relevance.egg-info/top_level.txt
+tests/test_data_build.py

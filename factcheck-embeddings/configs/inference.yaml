@@ -1,0 +1,12 @@
+# Common settings for inference
+model_name_or_path: "runs/factcheck_relevance_cpu" # or the base model if not trained yet
+output_dir: "runs/factcheck_relevance_cpu"
+corpus_in_path: "data/tevatron/corpus.jsonl"
+corpus_out_path: "runs/factcheck_relevance_cpu/corpus.pkl"
+query_in_path: "data/tevatron/dev_queries.jsonl"
+query_out_path: "runs/factcheck_relevance_cpu/query.pkl"
+run_path: "runs/factcheck_relevance_cpu/dev.run"
+topk: 50
+p_max_len: 192
+q_max_len: 64
+per_device_eval_batch_size: 32

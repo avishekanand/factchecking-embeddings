@@ -1,0 +1,13 @@
+# Test set inference settings
+model_name_or_path: "runs/factcheck_relevance_cpu"
+output_dir: "runs/factcheck_relevance_test"
+corpus_in_path: "data/tevatron_test/corpus.jsonl"
+corpus_out_path: "runs/factcheck_relevance_test/corpus.pkl"
+query_in_path: "data/tevatron_test/dev_queries.jsonl"
+query_out_path: "runs/factcheck_relevance_test/query.pkl"
+run_path: "runs/factcheck_relevance_test/test.run"
+qrels_path: "data/tevatron_test/dev_qrels.tsv"
+topk: 50
+p_max_len: 192
+q_max_len: 64
+per_device_eval_batch_size: 32

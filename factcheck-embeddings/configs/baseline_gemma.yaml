@@ -1,0 +1,15 @@
+# Baseline settings for google/embeddinggemma-300m
+model_name_or_path: "google/embeddinggemma-300m"
+output_dir: "runs/baseline_gemma"
+corpus_in_path: "data/tevatron/corpus.jsonl"
+corpus_out_path: "runs/baseline_gemma/corpus.pkl"
+query_in_path: "data/tevatron/dev_queries.jsonl"
+query_out_path: "runs/baseline_gemma/query.pkl"
+run_path: "runs/baseline_gemma/dev.run"
+qrels_path: "data/tevatron/dev_qrels.tsv"
+topk: 50
+p_max_len: 192
+q_max_len: 64
+per_device_eval_batch_size: 1 # Gemma can be memory intensive
+query_prefix: "task: search result | query: "
+document_prefix: "title: none | text: "

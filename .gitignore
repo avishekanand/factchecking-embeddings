@@ -1,0 +1,20 @@
+# Datasets
+*.json
+!claim_evidence_pairs_jan_2026_test.json
+!claim_evidence_pairs_jan_2026_train.json
+
+# Environment
+venv/
+.env
+__pycache__/
+*.pyc
+
+# Local artifacts
+factcheck-embeddings/runs/
+factcheck-embeddings/checkpoints/
+factcheck-embeddings/data/tevatron/
+factcheck-embeddings/data/tevatron_test/
+factcheck-embeddings/data/global/
+
+# System
+.DS_Store

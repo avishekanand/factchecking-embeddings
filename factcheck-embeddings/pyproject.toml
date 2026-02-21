@@ -1,0 +1,27 @@
+[project]
+name = "factcheck-tevatron-relevance"
+version = "0.1.0"
+description = "Tevatron-based bi-encoder for claim-evidence relevance"
+authors = [
+    { name = "FactCheck Team", email = "info@factcheck.org" }
+]
+dependencies = [
+    "tevatron",
+    "sentence-transformers",
+    "pyyaml",
+    "faiss-cpu",
+    "accelerate",
+    "tqdm",
+    "pandas",
+    "numpy",
+    "pytest"
+]
+readme = "README.md"
+requires-python = ">=3.9"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

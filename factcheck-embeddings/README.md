@@ -1,0 +1,120 @@
+# FactCheck Embeddings
+
+This repository contains automated codegen to train a Tevatron relevance bi-encoder for fact-checking.
+
+## Goal
+Train a dense retriever to distinguish between `RELEVANT`/`PARTIALLY_RELEVANT` and `NOT_RELEVANT` evidence snippets for a given claim.
+
+## Setup
+1. **Environment**:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate
+   pip install -e .
+   pip install accelerate aiohttp==3.10.11
+   ```
+2. **Data**:
+   Place your raw JSON files in `data/raw/`.
+
+## Pipeline
+Run the full pipeline on CPU:
+```bash
+bash scripts/run_all_cpu.sh
+```
+
+Individual steps:
+1. **Build Data**: `bash scripts/run_build.sh`
+2. **Train**: `bash scripts/run_train_cpu.sh`
+3. **Encode & Retrieve**: `bash scripts/run_encode.sh` and `bash scripts/run_retrieve.sh`
+4. **Evaluate**: `bash scripts/run_eval.sh`
+
+## Implementation Details
+
+### Training Details
+- **Architecture**: Bi-encoder using `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`.
+- **Framework**: Tevatron (dense retrieval framework).
+- **CPU Defaults**: Optimized for CPU iteration (batch size 4, max lengths 64/192).
+- **Compatibility**: Includes a monkeypatch in `src/factcheck_relevance/train.py` to support `transformers` 4.47+ signatures.
+
+### Negative Sampling
+We use **Hard-Negative Sampling** based on the `cosine_similarity` provided in the raw data:
+1. For each positive, we draw a fixed number of negatives (`k_neg`).
+2. We build a "hard pool" of the top 20 negatives by similarity.
+3. We sample `k_hard` (default 67%) from this hard pool.
+4. We sample the remaining `k_rand` from the rest of the negatives.
+
+### Loss Function
+The model uses **SimpleContrastiveLoss** (InfoNCE). This is the standard loss used by Tevatron for dense retrieval, which pushes positive pairs closer and negative pairs further apart in the embedding space.
+
+### Data Balancing
+- **Query Level**: Claims with zero positive evidence snippets are skipped during training to avoid noise.
+- **Instance Level**: For every positive snippet, we generate one training instance with a fixed ratio of negatives (1:3 by default). This ensures the model sees a balanced number of contrastive examples for every relevant snippet.
+
+## Configs
+- `configs/data_build.yaml`: Data processing settings (split ratios, sampling params).
+- `configs/cpu_train.yaml`: Training hyperparameters (learning rate, epochs).
+- `configs/inference.yaml`: Retrieval settings (top-k, batch sizes).
+
+
+## Reproducibility
+To reproduce the findings on a different machine:
+1. **Clone the repository** (logic and configs only).
+2. **Setup Environment**:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate
+   pip install -e .
+   pip install accelerate aiohttp==3.10.11
+   ```
+3. **Training Details**:
+   - The model was trained for **1 epoch** (sufficient for this MiniLM backbone and dataset size).
+   - Parameters are defined in [cpu_train.yaml](configs/cpu_train.yaml).
+   - Detailed training metrics and internal state are recorded in `runs/factcheck_relevance_cpu/trainer_state.json`.
+4. **Provide Raw Data**:
+   Place the original `claim_evidence_pairs_jan_2026_train.json` and `claim_evidence_pairs_jan_2026_test.json` files in `data/raw/`.
+5. **Run Reproduction Script**:
+   ```bash
+   # For global collection evaluation
+   bash scripts/run_global.sh
+   
+   # For test-set only evaluation
+   bash scripts/run_test.sh
+   ```
+
+*Note: Use the provided `.gitignore` to manage local artifacts and environments.*
+
+
+## Reproducibility & Sharing
+
+### Model Checkpoints
+The trained model checkpoints are stored in:
+`factcheck-embeddings/runs/factcheck_relevance_cpu/`
+
+This directory contains the `pytorch_model.bin` (or `model.safetensors`), `config.json`, and the tokenizer files required for inference.
+
+### Sharing with Colleagues
+To share the project state so a colleague can reproduce the results:
+1.  **Share the Model**: Zip the content of `factcheck-embeddings/runs/factcheck_relevance_cpu/` and share it.
+2.  **Share the Data**: Provide the raw JSON files (`claim_evidence_pairs_jan_2026_*.json`).
+3.  **Setup**:
+    ```bash
+    cd factcheck-embeddings
+    python -m venv venv
+    source venv/bin/activate
+    pip install -e .
+    ```
+4.  **Reproduce**:
+    -   Place the shared model files back into `runs/factcheck_relevance_cpu/`.
+    -   Place the raw data in the root or `data/raw/`.
+    -   Run the evaluation script:
+        ```bash
+        bash scripts/run_test.sh
+        ```
+
+## Performance Results
+
+| Model / Dataset | MRR@10 | nDCG@10 | Recall@5 | Recall@50 |
+| :--- | :---: | :---: | :---: | :---: |
+| **Dev Set** (Local Split) | 0.7047 | 0.4930 | 0.3660 | 0.7097 |
+| **Official Test Set** | 0.7905 | 0.6541 | 0.5070 | 0.8421 |
+| **Master Collection** (Global) | 0.7315 | 0.5880 | 0.4350 | 0.7959 |

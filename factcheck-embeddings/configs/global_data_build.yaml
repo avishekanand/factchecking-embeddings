@@ -1,0 +1,10 @@
+input_paths:
+  - "data/raw/claim_evidence_pairs_jan_2026_train.json"
+  - "data/raw/claim_evidence_pairs_jan_2026_test.json"
+out_dir: "data/global"
+label_mapping:
+  RELEVANT: "positive"
+  PARTIALLY_RELEVANT: "positive"
+  NOT_RELEVANT: "negative"
+  ERROR: "drop"
+  UNKNOWN: "drop"

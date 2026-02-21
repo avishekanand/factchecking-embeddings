@@ -1,0 +1,21 @@
+# Environment
+venv/
+.env
+__pycache__/
+*.pyc
+
+# Data (Colleague provides raw data)
+data/raw/*.json
+data/tevatron/
+data/tevatron_test/
+data/global/
+
+# Outputs & Models
+runs/
+*.pkl
+*.run
+*.tsv
+checkpoint-*
+
+# System
+.DS_Store
