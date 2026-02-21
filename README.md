@@ -84,37 +84,60 @@ To reproduce the findings on a different machine:
 *Note: Use the provided `.gitignore` to manage local artifacts and environments.*
 
 
+## Methodology
+
+### Training Data Creation
+The training dataset is derived from raw claim-evidence pairs using the following logic:
+1.  **Instance Generation**: For every manually labeled positive snippet, a distinct training instance is created.
+2.  **Contrastive Sampling**: Each instance consists of one positive and a fixed ratio of negatives (default 1:3).
+3.  **Hard-Negative Selection**: We use a **Teacher-Guided** approach. Negatives are sorted by the `cosine_similarity` scores present in the raw data.
+    -   **Hard Pool**: The top 20 most similar negatives for a claim form the "hard" candidate pool.
+    -   **Sampling Ratio**: 67% of negatives are sampled from this hard pool, and 33% are sampled randomly.
+    -   **Goal**: This forces the model to learn subtle boundaries between true relevance and high-level semantic similarity.
+
+### Evaluation Assumptions
+We report metrics under two distinct collection assumptions:
+-   **Local (Official Test Set)**: Retrieval against only the ~42 candidate snippets per claim.
+-   **Global (Master Collection)**: Retrieval against all ~53,000 unique snippets in the entire dataset.
+
+### Limitations & Caveats
+-   **Teacher Dependency**: Quality of hard negatives depends on the scores in the raw data.
+-   **Model Size**: Optimized for CPU using MiniLM; may have lower semantic resolution than 7B+ parameter models.
+
 ## Reproducibility & Sharing
 
 ### Model Checkpoints
-The trained model checkpoints are stored in:
+The trained model checkpoints should be stored in:
 `factcheck-embeddings/runs/factcheck_relevance_cpu/`
 
-This directory contains the `pytorch_model.bin` (or `model.safetensors`), `config.json`, and the tokenizer files required for inference.
-
-### Sharing with Colleagues
-To share the project state so a colleague can reproduce the results:
-1.  **Share the Model**: Zip the content of `factcheck-embeddings/runs/factcheck_relevance_cpu/` and share it.
-2.  **Share the Data**: Provide the raw JSON files (`claim_evidence_pairs_jan_2026_*.json`).
-3.  **Setup**:
+### Sharing with Vinay
+To share the project state for reproduction:
+1.  **Setup Environment**:
     ```bash
     cd factcheck-embeddings
     python -m venv venv
     source venv/bin/activate
     pip install -e .
     ```
-4.  **Reproduce**:
-    -   Place the shared model files back into `runs/factcheck_relevance_cpu/`.
-    -   Place the raw data in the root or `data/raw/`.
-    -   Run the evaluation script:
-        ```bash
-        bash scripts/run_test.sh
-        ```
+2.  **Reproduce**:
+    -   Place shared model files in `runs/factcheck_relevance_cpu/`.
+    -   Place raw JSON data in the root or `data/raw/`.
+    -   Run evaluation: `bash scripts/run_test.sh`
 
 ## Performance Results
 
-| Model / Dataset | MRR@10 | nDCG@10 | Recall@5 | Recall@50 |
+### Final Model Comparison (Official Test Set)
+| Model / Strategy | MRR@10 | nDCG@10 | Recall@5 | Recall@50 |
 | :--- | :---: | :---: | :---: | :---: |
-| **Dev Set** (Local Split) | 0.7047 | 0.4930 | 0.3660 | 0.7097 |
-| **Official Test Set** | 0.7905 | 0.6541 | 0.5070 | 0.8421 |
+| **MiniLM-L12 (InfoNCE/Tevatron)** | **0.7905** | **0.6541** | **0.5070** | **0.8421** |
+| MiniLM-L12 (SetFit) | 0.5798 | 0.4304 | 0.3166 | 0.6119 |
+| Untuned Gemma (300M) | 0.0343 | 0.0317 | 0.0195 | 0.1457 |
+
+> [!TIP]
+> InfoNCE training (10 epochs) significantly outperforms SetFit (3 epochs) and zero-shot Gemma.
+
+### Detailed Split Metrics
+| Dataset | MRR@10 | nDCG@10 | Recall@5 | Recall@50 |
+| :--- | :---: | :---: | :---: | :---: |
+| **Dev Set** (Local) | 0.7047 | 0.4930 | 0.3660 | 0.7097 |
 | **Master Collection** (Global) | 0.7315 | 0.5880 | 0.4350 | 0.7959 |
