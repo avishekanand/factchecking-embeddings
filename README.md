@@ -92,18 +92,17 @@ The trained model checkpoints are stored in:
 
 This directory contains the `pytorch_model.bin` (or `model.safetensors`), `config.json`, and the tokenizer files required for inference.
 
-### Sharing with Colleagues
-To share the project state so a colleague can reproduce the results:
-1.  **Share the Model**: Zip the content of `factcheck-embeddings/runs/factcheck_relevance_cpu/` and share it.
-2.  **Share the Data**: Provide the raw JSON files (`claim_evidence_pairs_jan_2026_*.json`).
-3.  **Setup**:
+### Sharing with Vinay
+
+
+1.  **Setup**:
     ```bash
     cd factcheck-embeddings
     python -m venv venv
     source venv/bin/activate
     pip install -e .
     ```
-4.  **Reproduce**:
+2.  **Reproduce**:
     -   Place the shared model files back into `runs/factcheck_relevance_cpu/`.
     -   Place the raw data in the root or `data/raw/`.
     -   Run the evaluation script:
@@ -139,6 +138,7 @@ Our evaluation results are reported based on two scenarios:
 
 ## Performance Results
 
+
 ### Final Model Comparison (Official Test Set)
 
 | Model / Strategy | MRR@10 | nDCG@10 | Recall@5 | Recall@50 |
@@ -146,6 +146,9 @@ Our evaluation results are reported based on two scenarios:
 | **MiniLM-L12 (InfoNCE/Tevatron)** | **0.7905** | **0.6541** | **0.5070** | **0.8421** |
 | MiniLM-L12 (SetFit) | 0.5798 | 0.4304 | 0.3166 | 0.6119 |
 | Untuned Gemma (300M) | 0.0343 | 0.0317 | 0.0195 | 0.1457 |
+
+
+
 
 > [!TIP]
 > The Tevatron-based InfoNCE approach (10 epochs) significantly outperforms both the SetFit fine-tuning (3 epochs) and the zero-shot baseline.
