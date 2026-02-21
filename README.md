@@ -28,6 +28,8 @@ Individual steps:
 3. **Encode & Retrieve**: `bash scripts/run_encode.sh` and `bash scripts/run_retrieve.sh`
 4. **Evaluate**: `bash scripts/run_eval.sh`
 
+Note that if you dont want to train and just want to reproduce the results, you can use the pre-trained model from `factcheck-embeddings/runs/factcheck_relevance_cpu/`. see reproducibility section for more details.
+
 ## Implementation Details
 
 ### Training Details
